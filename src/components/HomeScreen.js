@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
-import { View, Text, Slider, StyleSheet } from "react-native";
-import Dices from './Dices'
+import { View, Text, Slider, StyleSheet, Button } from "react-native";
+import Dices from "./Dices";
 
 const thumbTintColor = "#fff";
 const minimumTrackTintColor = "#888";
@@ -12,15 +12,21 @@ const TYPE_DICES = "dices";
 class HomeScreen extends Component {
   state = {
     dices: 3,
-    dots: 6
+    dots: 6,
+    result: []
   };
   onValueChange = (step, type) => {
     console.log(step, type);
-    if (type === TYPE_DOTS) {
-    }
+    this.setState({ [type]: step, result: [] });
   };
 
-  onSlidingComplete = () => {};
+  onPress = () => {
+    const { dices, dots } = this.state;
+    const result = Array.from({ length: dices }, () =>
+      Math.floor(Math.random() * (dots - 1 + 1) + 1)
+    );
+    this.setState({ result });
+  };
 
   sliders = [
     {
@@ -41,13 +47,27 @@ class HomeScreen extends Component {
     }
   ];
 
+  getTotalThrowValue = () => {
+    const { result, dots, dices } = this.state;
+    if (!result.length) {
+      return dots * dices;
+    }
+
+    return result.reduce((a, b) => a + b, 0);
+  };
+
+  getDicesQuantity = () => new Array(this.state.dices).fill(1);
+
   render() {
+    const { dots, result } = this.state;
     return (
-      <View>
-        <View style={styles.dicesContainer}>
+      <View styles={styles.container}>
+        <View style={styles.slidersContainer}>
           {this.sliders.map(slider => (
             <Fragment key={slider.name}>
-              <Text>{slider.name}</Text>
+              <Text>
+                {slider.name} | {this.state[slider.name.toLowerCase()]}
+              </Text>
               <Slider
                 {...slider}
                 value={this.state[slider.type]}
@@ -58,20 +78,36 @@ class HomeScreen extends Component {
               />
             </Fragment>
           ))}
-          <Dices dices={new Array(this.state.dices).fill(1)} />
         </View>
+        <View>
+          <Text>TOTAL VALUE | {this.getTotalThrowValue()}</Text>
+        </View>
+        <View styles={styles.buttonContainer}>
+          <Button title="Throw" onPress={this.onPress} style={styles.button} />
+        </View>
+        <Dices dices={this.getDicesQuantity()} dots={dots} result={result} />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  dicesContainer: {
+  container: {
+    flex: 1,
+    alignItems: "flex-end"
+  },
+  slidersContainer: {
     marginTop: 100
   },
   sliders: {
     width: "100%",
     marginTop: 16
+  },
+  buttonContainer: {
+    flex: 1
+  },
+  button: {
+    alignSelf: "flex-end"
   }
 });
 
