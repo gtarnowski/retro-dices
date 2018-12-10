@@ -1,10 +1,43 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { LinearGradient } from "expo";
-import HomeScreen from "./src/components/HomeScreen";
+import { StyleSheet, Text, View, ImageBackground } from "react-native";
+import { LinearGradient, Font } from "expo";
+import AppContainer from "./src/Navigation";
 
 export default class App extends React.Component {
+  state = {
+    fontLoaded: false
+  };
+
+  async componentDidMount() {
+    await Font.loadAsync({
+      "WorkSans-Thin": require("./assets/fonts/WorkSans-Thin.ttf"),
+      "WorkSans-Medium": require("./assets/fonts/WorkSans-Medium.ttf"),
+      "Montserrat-Extra-Bold": require("./assets/fonts/Montserrat-ExtraBold.ttf")
+    });
+
+    this.setState({ fontLoaded: true });
+  }
   render() {
+    return (
+      <View style={styles.container}>
+        {this.state.fontLoaded && <AppContainer />}
+      </View>
+    );
+
+    return (
+      <View style={styles.container}>
+        <ImageBackground
+          style={{
+            height: "100%",
+            width: "100%"
+          }}
+          source={require("./assets/background.jpg")}
+        >
+          {this.state.fontLoaded && <AppContainer />}
+        </ImageBackground>
+      </View>
+    );
+
     return (
       <LinearGradient
         colors={["#42275a", "#734b6d"]}
@@ -15,11 +48,7 @@ export default class App extends React.Component {
           top: 0,
           height: "100%"
         }}
-      >
-        <View style={styles.container}>
-          <HomeScreen />
-        </View>
-      </LinearGradient>
+      />
     );
   }
 }
@@ -27,8 +56,6 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "transparent",
-    paddingHorizontal: 24,
-    paddingVertical: 24,
+    backgroundColor: "#111"
   }
 });

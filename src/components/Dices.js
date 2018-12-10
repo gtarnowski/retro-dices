@@ -1,37 +1,44 @@
-import React, { Component } from "react";
-import { View, Text, Slider, StyleSheet } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
+import { FONT_WORKSANS_THIN } from "../lib/constants";
 
-const Dices = ({ dices, dots, result }) => {
-  console.log(result)
-  return (
-    <View style={styles.container}>
+const Dices = ({ dices, dots, result, onThrowSingleDice }) => (
+  <View style={{ flex: 4 }}>
+    <View style={container}>
       {dices.map((dice, key) => (
-        <View key={key} style={styles.dice}>
-          <Text style={styles.item}>
-            {result.length ? result[key] : dots}
-          </Text>
-        </View>
+        <TouchableHighlight onPress={() => onThrowSingleDice(key)} key={key}>
+          <View style={diceBox}>
+            <Text style={item}>
+              {result.length ? result[key] : dots}
+            </Text>
+          </View>
+        </TouchableHighlight>
       ))}
     </View>
-  );
-};
+  </View>
+);
 
-const styles = StyleSheet.create({
+const { container, diceBox, item } = StyleSheet.create({
   container: {
-    flex: 1,
     display: "flex",
+    flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
+    alignItems: "center",
+    alignContent: "center",
     justifyContent: "center"
   },
-  dice: {
+    diceBox: {
     margin: 5,
     height: 80,
     width: 80,
-    backgroundColor: "white"
+    backgroundColor: "#263238"
   },
   item: {
-    top: "42%",
+    fontFamily: FONT_WORKSANS_THIN,
+    color: "white",
+    fontSize: 35,
+    top: "22%",
     textAlign: "center"
   }
 });
